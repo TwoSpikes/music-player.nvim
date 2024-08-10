@@ -73,8 +73,7 @@ function! music_player#expand_sources(sources)
 endfunction
 
 function! music_player#handle_player_output(output, source, idx)
-	if a:output ==# ["Exiting... (End of file)", ""]
-		echomsg "Hello everyone src=".a:source." idx=".a:idx
+	if a:output ==# [""]
 		let g:music_player_job = music_player#play(a:source, a:idx)
 	endif
 endfunction
@@ -82,6 +81,7 @@ endfunction
 function! music_player#play(source, idx)
 	let escaped_source = music_player#repr(a:source)
 	return jobstart('mpv '.escaped_source, {
+	\	'pty': v:true,
 	\	'on_stdout': {j,d,e ->
 	\		music_player#handle_player_output(d, g:music[a:idx+1], a:idx+1)
 	\	}
@@ -90,7 +90,7 @@ endfunction
 
 function! music_player#pause()
 	if exists('g:music_player_job')
-		call chansend(g:music_player_job, 'p')
+		execute "lua vim.api.nvim_chan_send(".g:music_player_job.', "p")'
 	else
 		echohl ErrorMsg
 		echomsg "Please select music to play"

@@ -52,6 +52,8 @@ $ cd ~/.vim/pack/test/start/ && git clone https://github.com/TwoSpikes/music-pla
 
 It can read files in directory and recursively read directories
 
+Press `p` to pause/unpause.
+
 # Dependencies
 
 [mpv](https://github.com/mpv-player/mpv)
