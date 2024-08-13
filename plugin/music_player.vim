@@ -28,7 +28,17 @@ function! music_player#track_switching_cursor_moved_handler()
 	endif
 endfunction
 
+function! music_player#track_switching_buffer_changed_handler()
+	if !exists('g:music_player_job')
+		return
+	endif
+	if win_getid() ==# g:music_player_window_winid
+		execute g:music_player_track_idx + 1
+	endif
+endfunction
+
 augroup music_player_track_switching
 	autocmd!
 	autocmd CursorMoved * call music_player#track_switching_cursor_moved_handler()
+	autocmd BufEnter * call music_player#track_switching_buffer_changed_handler()
 augroup END
