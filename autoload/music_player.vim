@@ -55,6 +55,10 @@ function! music_player#expand_sources(sources)
 		if source !~# '^https://' && isdirectory(expand(source))
 			let result += music_player#expand_sources(map(readdir(expand(source)), {_, entry -> expand(source)..'/'..entry}))
 		else
+			if source =~# '^https://'
+				let result += [source]
+				continue
+			endif
 			let full_source = expand(source)
 			if v:false
 			elseif v:false
@@ -80,7 +84,7 @@ function! music_player#handle_player_output(output, source, idx)
 endfunction
 
 function! music_player#play(source, idx)
-	let escaped_source = music_player#repr(a:source)
+	let actual_source = music_player#repr(a:source)
 	let g:music_player_track_idx = a:idx
 	if a:idx <# len(g:music) - 1
 		let next_music = a:idx + 1
@@ -89,7 +93,7 @@ function! music_player#play(source, idx)
 	endif
 	execute "
 	\return jobstart(
-	\	'mpv '.escaped_source,
+	\	'mpv '.actual_source,
 	\	{
 	\		'pty': v:true,
 	\		'on_stdout':
