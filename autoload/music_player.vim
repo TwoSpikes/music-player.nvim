@@ -41,6 +41,8 @@ function! music_player#repr(text)
 		\|| c ==# '('
 		\|| c ==# ')'
 		\|| c ==# '#'
+		\|| c ==# '?'
+		\|| c ==# '*'
 			let result .= '\'.c
 		else
 			let result .= c
@@ -54,6 +56,12 @@ function! music_player#expand_sources(sources)
 	for source in a:sources
 		if source !~# '^https://' && isdirectory(expand(source))
 			let result += music_player#expand_sources(map(readdir(expand(source)), {_, entry -> expand(source)..'/'..entry}))
+		elseif source =~# '^https://youtube.com/playlist'
+			let TMPFILE=trim(system(["mktemp", "-u"]))
+			call system('yt-dlp --flat-playlist --print id '.music_player#repr(source).' > '.TMPFILE)
+			let video_ids = readfile(TMPFILE)
+			call delete(TMPFILE)
+			let result += map(video_ids, {_, entry -> 'https://youtube.com/watch?v='..entry})
 		else
 			if source =~# '^https://'
 				let result += [source]

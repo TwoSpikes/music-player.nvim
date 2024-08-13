@@ -52,6 +52,8 @@ $ cd ~/.vim/pack/test/start/ && git clone https://github.com/TwoSpikes/music-pla
 
 It can read files in directory and recursively read directories
 
+It supports links to YouTube videos and playlists. (It will unpack a playlist and add videos in it to queue)
+
 Press `p` to pause/unpause.
 
 Press `j`, `k` to switch track, or select it with mouse.
