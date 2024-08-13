@@ -54,6 +54,8 @@ It can read files in directory and recursively read directories
 
 Press `p` to pause/unpause.
 
+Press `j`, `k` to switch track, or select it with mouse.
+
 # Dependencies
 
 [mpv](https://github.com/mpv-player/mpv)
