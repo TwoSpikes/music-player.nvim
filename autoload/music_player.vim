@@ -74,18 +74,34 @@ endfunction
 
 function! music_player#handle_player_output(output, source, idx)
 	if a:output ==# [""]
+		execute a:idx + 1
 		let g:music_player_job = music_player#play(a:source, a:idx)
 	endif
 endfunction
 
 function! music_player#play(source, idx)
 	let escaped_source = music_player#repr(a:source)
-	return jobstart('mpv '.escaped_source, {
-	\	'pty': v:true,
-	\	'on_stdout': {j,d,e ->
-	\		music_player#handle_player_output(d, g:music[a:idx+1], a:idx+1)
+	let g:music_player_track_idx = a:idx
+	if a:idx <# len(g:music) - 1
+		let next_music = a:idx + 1
+	else
+		let next_music = 0
+	endif
+	execute "
+	\return jobstart(
+	\	'mpv '.escaped_source,
+	\	{
+	\		'pty': v:true,
+	\		'on_stdout':
+	\		{j,d,e ->
+	\			music_player#handle_player_output(
+	\				d,
+	\				g:music[".next_music."],
+	\				".next_music."
+	\			)
+	\		}
 	\	}
-	\})
+	\)"
 endfunction
 
 function! music_player#pause()
@@ -118,12 +134,20 @@ function! music_player#open_window(sources=[])
 		let track = music[idx]
 		call setline(idx + 1, fnamemodify(track, ':t'))
 	endfor
+	let g:music = music
 	if len(music) ># 0
 		let g:music_player_job = music_player#play(music[0], 0)
 	endif
-	let g:music = music
 	set nomodified
 	set nomodifiable
 	nnoremap <buffer> p <cmd>call music_player#pause()<cr>
 endfunction
 
+function! music_player#switch_track(idx)
+	if exists('g:music_player_job')
+		if a:idx !=# g:music_player_track_idx
+			call jobstop(g:music_player_job)
+			let g:music_player_job = music_player#play(g:music[a:idx], a:idx)
+		endif
+	endif
+endfunction
