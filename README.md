@@ -44,6 +44,11 @@ Using Vim built-in package manager (requires Vim v.8.0+) ([help](https://vimhelp
 $ cd ~/.vim/pack/test/start/ && git clone https://github.com/TwoSpikes/music-player.vim
 ```
 
+# Dependencies
+
+- [mpv](https://github.com/mpv-player/mpv)
+- youtube-dl or yt-dlp (yt-dlp is more recommended) (if you want to play music from YouTube videos)
+
 # Usage
 
 ```vim
@@ -57,7 +62,3 @@ It supports links to YouTube videos and playlists. (It will unpack a playlist an
 Press `p` to pause/unpause.
 
 Press `j`, `k` to switch track, or select it with mouse.
-
-# Dependencies
-
-[mpv](https://github.com/mpv-player/mpv)
