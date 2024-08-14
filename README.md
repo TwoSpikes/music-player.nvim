@@ -52,7 +52,7 @@ $ cd ~/.vim/pack/test/start/ && git clone https://github.com/TwoSpikes/music-pla
 # Usage
 
 ```vim
-:call music_player#open_window('directory/with/music')
+:call music_player#open_window(['directory/with/music'])
 ```
 
 It can read files in directory and recursively read directories
