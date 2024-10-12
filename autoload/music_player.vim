@@ -96,7 +96,8 @@ function! music_player#handle_player_output(output, source, idx)
 		if v:true
 		\&& win_getid() ==# g:music_player_window_winid
 		\&& bufnr() ==# g:music_player_window_bufnr
-		execute a:idx + 1
+			execute a:idx + 1
+		endif
 		let g:music_player_job = music_player#play(a:source, a:idx)
 	endif
 endfunction
