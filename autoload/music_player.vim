@@ -139,9 +139,9 @@ endfunction
 
 function! music_player#open_window(sources=[])
 	vsplit
+	enew
 	let g:music_player_window_winid = win_getid()
 	let g:music_player_window_bufnr = bufnr()
-	enew
 	file music player window
 	setlocal filetype=musicplayer
 	setlocal stc=
@@ -171,10 +171,12 @@ function! music_player#open_window(sources=[])
 endfunction
 
 function! music_player#switch_track(idx)
-	if exists('g:music_player_job')
-		if a:idx !=# g:music_player_track_idx
-			call jobstop(g:music_player_job)
-			let g:music_player_job = music_player#play(g:music[a:idx][0], a:idx)
-		endif
+	if !exists('g:music_player_job')
+		return
+	endif
+
+	if a:idx !=# g:music_player_track_idx
+		call jobstop(g:music_player_job)
+		let g:music_player_job = music_player#play(g:music[a:idx][0], a:idx)
 	endif
 endfunction
