@@ -23,7 +23,9 @@ function! music_player#track_switching_cursor_moved_handler()
 	if !exists('g:music_player_job')
 		return
 	endif
-	if win_getid() ==# g:music_player_window_winid
+	if v:true
+	\&& win_getid() ==# g:music_player_window_winid
+	\&& bufnr() ==# g:music_player_window_bufnr
 		call music_player#switch_track(line('.')-1)
 	endif
 endfunction

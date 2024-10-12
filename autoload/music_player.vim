@@ -129,6 +129,7 @@ endfunction
 function! music_player#open_window(sources=[])
 	vsplit
 	let g:music_player_window_winid = win_getid()
+	let g:music_player_window_bufnr = bufnr()
 	enew
 	file music player window
 	set filetype=musicplayer
