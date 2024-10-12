@@ -139,7 +139,7 @@ function! music_player#open_window(sources=[])
 	let g:music_player_window_bufnr = bufnr()
 	enew
 	file music player window
-	set filetype=musicplayer
+	setlocal filetype=musicplayer
 	setlocal stc=
 	setlocal nonu nornu
 	setlocal buftype=nofile
@@ -161,8 +161,8 @@ function! music_player#open_window(sources=[])
 	if len(music) ># 0
 		let g:music_player_job = music_player#play(music[0][0], 0)
 	endif
-	set nomodified
-	set nomodifiable
+	setlocal nomodified
+	setlocal nomodifiable
 	nnoremap <buffer> p <cmd>call music_player#pause()<cr>
 endfunction
 
