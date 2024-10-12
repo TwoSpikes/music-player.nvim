@@ -113,7 +113,7 @@ function! music_player#play(source, idx)
 	\return jobstart(
 	\	'yt-dlp '.actual_source.' -x --throttled-rate=100K -R 10000000000 --socket-timeout=5 -o - | mpv -',
 	\	{
-			'pty': v:true,
+	\	'pty': v:true,
 	\		'on_stdout':
 	\		{j,d,e ->
 	\			music_player#handle_player_output(
