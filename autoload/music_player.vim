@@ -60,11 +60,18 @@ function! music_player#expand_sources(sources)
 			let TMPFILE=trim(system(["mktemp", "-u"]))
 			call system('yt-dlp --flat-playlist --print id '.music_player#repr(source).' > '.TMPFILE)
 			let video_ids = readfile(TMPFILE)
+			call system('yt-dlp --flat-playlist --print title '.music_player#repr(source).' > '.TMPFILE)
+			let video_names = readfile(TMPFILE)
 			call delete(TMPFILE)
-			let result += map(video_ids, {_, entry -> 'https://youtube.com/watch?v='..entry})
+			let videos = len(video_ids)
+			let video_number = 0
+			while video_number <# videos
+				let result += [['https://youtube.com/watch?v='..video_ids[video_number], video_names[video_number]]]
+				let video_number += 1
+			endwhile
 		else
 			if source =~# '^https://'
-				let result += [source]
+				let result += [[source, system('yt-dlp --flat-playlist --print title '.source)]]
 				continue
 			endif
 			let full_source = expand(source)
@@ -77,7 +84,7 @@ function! music_player#expand_sources(sources)
 			\|| full_source =~# '\.wav$'
 			\|| full_source =~# '\.wma$'
 			\|| full_source =~# '\.aac$'
-				let result += [full_source]
+				let result += [full_source, fnamemodify(full_source, ':t')]
 			endif
 		endif
 	endfor
@@ -108,7 +115,7 @@ function! music_player#play(source, idx)
 	\		{j,d,e ->
 	\			music_player#handle_player_output(
 	\				d,
-	\				g:music[".next_music."],
+	\				g:music[".next_music."][0],
 	\				".next_music."
 	\			)
 	\		}
@@ -137,6 +144,9 @@ function! music_player#open_window(sources=[])
 	setlocal nonu nornu
 	setlocal buftype=nofile
 	setlocal hidden
+	setlocal nowrap
+	setlocal nolinebreak
+	setlocal list
 	if a:sources ==# []
 		call setline(1, 'Please select music to play')
 		let music = []
@@ -144,12 +154,12 @@ function! music_player#open_window(sources=[])
 		let music = music_player#expand_sources(a:sources)
 	endif
 	for idx in range(len(music))
-		let track = music[idx]
-		call setline(idx + 1, fnamemodify(track, ':t'))
+		let name = music[idx][1]
+		call setline(idx + 1, name)
 	endfor
 	let g:music = music
 	if len(music) ># 0
-		let g:music_player_job = music_player#play(music[0], 0)
+		let g:music_player_job = music_player#play(music[0][0], 0)
 	endif
 	set nomodified
 	set nomodifiable
@@ -160,7 +170,7 @@ function! music_player#switch_track(idx)
 	if exists('g:music_player_job')
 		if a:idx !=# g:music_player_track_idx
 			call jobstop(g:music_player_job)
-			let g:music_player_job = music_player#play(g:music[a:idx], a:idx)
+			let g:music_player_job = music_player#play(g:music[a:idx][0], a:idx)
 		endif
 	endif
 endfunction
