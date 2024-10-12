@@ -93,6 +93,9 @@ endfunction
 
 function! music_player#handle_player_output(output, source, idx)
 	if a:output ==# [""]
+		if v:true
+		\&& win_getid() ==# g:music_player_window_winid
+		\&& bufnr() ==# g:music_player_window_bufnr
 		execute a:idx + 1
 		let g:music_player_job = music_player#play(a:source, a:idx)
 	endif
@@ -108,9 +111,9 @@ function! music_player#play(source, idx)
 	endif
 	execute "
 	\return jobstart(
-	\	'mpv '.actual_source,
+	\	'yt-dlp '.actual_source.' -x --throttled-rate=100K -R 10000000000 --socket-timeout=5 -o - | mpv -',
 	\	{
-	\		'pty': v:true,
+			'pty': v:true,
 	\		'on_stdout':
 	\		{j,d,e ->
 	\			music_player#handle_player_output(
